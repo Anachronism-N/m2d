@@ -91,7 +91,7 @@ def numeric(value, label):
 
 
 class ReviewState:
-    def __init__(self, manifest, allowed_roots, reviews, ffprobe=None, run_manifests=()):
+    def __init__(self, manifest, allowed_roots, reviews, ffprobe=None, run_manifests=(), trusted_origin=None):
         if not allowed_roots:
             raise ValueError('at least one --allowed-root is required')
         self.roots = tuple(Path(root).resolve(strict=True) for root in allowed_roots)
@@ -106,6 +106,16 @@ class ReviewState:
         if within(self.reviews, PUBLIC_ROOT):
             raise ValueError('review output must be outside the public checkout')
         self.ffprobe = ffprobe
+        self.trusted_origin = None
+        self.trusted_proxy_host = None
+        if trusted_origin is not None:
+            origin = urlsplit(trusted_origin)
+            if (origin.scheme != 'https' or not origin.hostname or origin.username is not None
+                    or origin.password is not None or origin.path not in ('', '/')
+                    or origin.query or origin.fragment):
+                raise ValueError('trusted-origin must be one explicit HTTPS origin')
+            self.trusted_origin = 'https://' + origin.netloc
+            self.trusted_proxy_host = origin.netloc
         self.lock = threading.RLock()
         self.token = secrets.token_urlsafe(32)
         self.cache = {}
@@ -395,7 +405,10 @@ class Handler(BaseHTTPRequestHandler):
     def trusted_host(self):
         host = self.headers.get('Host', '')
         port = self.server.server_address[1]
-        return host in {f'127.0.0.1:{port}', f'localhost:{port}'}
+        allowed = {f'127.0.0.1:{port}', f'localhost:{port}'}
+        if self.server.state.trusted_proxy_host is not None:
+            allowed.add(self.server.state.trusted_proxy_host)
+        return host in allowed
 
     def send(self, code, body, ctype='application/json; charset=utf-8', extra=None):
         if not isinstance(body, bytes):
@@ -472,7 +485,10 @@ class Handler(BaseHTTPRequestHandler):
         if not self.trusted_host() or not secrets.compare_digest(self.headers.get('X-Review-Token', ''), self.server.state.token):
             return self.send(403, {'error': 'local review token required'})
         origin = self.headers.get('Origin')
-        if origin and origin not in {f'http://127.0.0.1:{self.server.server_address[1]}', f'http://localhost:{self.server.server_address[1]}'}:
+        allowed_origins = {f'http://127.0.0.1:{self.server.server_address[1]}', f'http://localhost:{self.server.server_address[1]}'}
+        if self.server.state.trusted_origin is not None:
+            allowed_origins.add(self.server.state.trusted_origin)
+        if origin and origin not in allowed_origins:
             return self.send(403, {'error': 'cross-origin write forbidden'})
         url = urlsplit(self.path)
         if url.path not in ('/api/review', '/api/reload'):
@@ -512,9 +528,10 @@ def main(argv=None):
     parser.add_argument('--reviews', required=True, help='Private output JSONL; parent directory must already exist')
     parser.add_argument('--ffprobe', help='ffprobe executable from a separate environment')
     parser.add_argument('--port', type=int, default=8767)
+    parser.add_argument('--trusted-origin', help='Optional exact HTTPS origin of an authenticated internal reverse proxy')
     args = parser.parse_args(argv)
     try:
-        state = ReviewState(args.manifest, args.allowed_root, args.reviews, args.ffprobe, args.run_manifest)
+        state = ReviewState(args.manifest, args.allowed_root, args.reviews, args.ffprobe, args.run_manifest, args.trusted_origin)
     except (OSError, ValueError, TypeError):
         parser.error('blocked: invalid/unavailable private manifest, allowed roots, or review output; consult README contract')
     with ReviewServer(args.port, state) as server:

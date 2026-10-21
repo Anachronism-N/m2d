@@ -34,6 +34,30 @@ class ReviewTests(unittest.TestCase):
         self.state = module.ReviewState(self.manifest, [self.media],
                                        self.root / 'reviews.jsonl', ffprobe='/missing/ffprobe')
 
+    def test_exact_proxy_origin_only(self):
+        state = module.ReviewState(self.manifest, [self.media], self.root / 'proxy_reviews.jsonl',
+                                   trusted_origin='https://review.example.invalid')
+        self.assertEqual(state.trusted_origin, 'https://review.example.invalid')
+        self.assertEqual(state.trusted_proxy_host, 'review.example.invalid')
+        server = module.ReviewServer(0, state)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        self.addCleanup(server.server_close)
+        self.addCleanup(server.shutdown)
+        url = 'http://127.0.0.1:' + str(server.server_address[1]) + '/api/manifest'
+        request = urllib.request.Request(url, headers={'Host': 'review.example.invalid'})
+        with urllib.request.urlopen(request) as response:
+            self.assertEqual(response.status, 200)
+        request = urllib.request.Request(url, headers={'Host': 'other.example.invalid'})
+        with self.assertRaises(urllib.error.HTTPError) as error:
+            urllib.request.urlopen(request)
+        self.assertEqual(error.exception.code, 403)
+        for origin in ('http://review.example.invalid', 'https://review.example.invalid/path',
+                       'https://user:secret@review.example.invalid'):
+            with self.assertRaises(ValueError):
+                module.ReviewState(self.manifest, [self.media], self.root / 'invalid.jsonl',
+                                   trusted_origin=origin)
+
     def test_range_bounds(self):
         self.assertEqual(module.byte_range('bytes=2-4', 10), (2, 4, 206))
         self.assertEqual(module.byte_range('bytes=-3', 10), (7, 9, 206))

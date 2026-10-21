@@ -175,3 +175,7 @@ low-confidence/static/high-density/severe-jitter negatives, pose invalid gaps,
 same-dance shifts, pair validity, repeated-seed/case balancing, small-sample
 uncertainty and private/no-overwrite CLI/NPZ behavior. They do **not** test real
 Wan-Dancer quality or a real NLF/video/reward pipeline.
+
+## NLF observation adapter
+
+`extract_pose.py` uses explicit private video manifests and a new private output namespace. The current NLF TorchScript detector contains hard-coded `cuda:0` operations: all three CPU attempts failed and were retained. Use `--device cuda` on an authorized available GPU; `map_location=cpu` does not establish CPU portability. No weights or H3 scripts are changed. Actual decoder timestamps, detection validity and largest-box selection are recorded; this is not identity tracking. GPU extraction and real reward calibration remain pending.

@@ -1,6 +1,6 @@
 # Wan-Dancer controlled experiments
 
-Research status: **preparation and CPU checks completed in part; video generation, reward calibration and training acceptance are pending.** See [EXPERIMENT_PLAN.md](EXPERIMENT_PLAN.md) for the gated protocol. No GPU-quality claim follows from the unit tests.
+Research status: **fixed weights and both-node runtime/kernel checks passed; the native Global container passed media validation. Native Local and paired-condition experiments are running; raw video quality, reward calibration and training acceptance remain pending.** See [EXPERIMENT_PLAN.md](EXPERIMENT_PLAN.md) for the gated protocol. No GPU-quality claim follows from the unit tests.
 
 ## Components
 

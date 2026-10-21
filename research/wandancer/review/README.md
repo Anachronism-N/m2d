@@ -16,6 +16,6 @@ Global author baseline: 38 frames, 8fps container, no audio. Container time is *
 
 Only manifest-listed media inside allowed canonical roots may be read; traversal and escaping symlinks are rejected. GET/HEAD support single byte ranges. Writes require a per-session token, loopback Host/Origin, bounded JSON and known complete media target; validation status accompanies every rating. A passed media contract does not establish natural dance, identity, anatomical correctness or music responsiveness.
 
-The new adapter follows the project's existing master-audio/synchronized-video workflow. It does not import or alter the old review or H3, and requires no third-party frontend assets. Reverse-proxy access must preserve the loopback upstream Host; no unvalidated external Host wildcard is enabled.
+The new adapter follows the project's existing master-audio/synchronized-video workflow. It does not import or alter the old review or H3, and requires no third-party frontend assets. For an authenticated internal reverse proxy that preserves its external Host/Origin, add `--trusted-origin "$EXACT_HTTPS_PROXY_ORIGIN"`. Only that exact Host and Origin are accepted; no wildcard is enabled, and the loopback bind, per-session write token and media allowlist remain enforced.
 
 CPU fixtures test path/range/ratings guards. Actual service startup and HTTP checks are separate acceptance events; browser playback, human scores and generated-media acceptance remain pending until observed.
