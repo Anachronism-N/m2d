@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="zh">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wan-Dancer private review</title><link rel="stylesheet" href="style.css"><script src="app.js" defer></script></head>
+<body>
+<header><b>Wan-Dancer 独立评审</b><label>评审别名 <input id="reviewer" maxlength="120" placeholder="匿名字母/数字别名"></label>
+<label>案例 <select id="sample"></select></label><label>条件 <select id="condition"><option value="all">全部</option></select></label>
+<button id="reload">刷新外部清单</button><span id="status" role="status"></span></header>
+<main><div id="bar"><button id="prev">上一例</button><button id="next">下一例</button><button id="play">播放</button>
+<button id="restart">重头</button><button id="stepB">-1帧</button><button id="stepF">+1帧</button>
+<label>逐帧列 <select id="frameTarget"></select></label><label>速度 <select id="rate"><option>0.25</option><option>0.5</option><option selected>1</option></select></label>
+<label>音轨/时钟 <select id="audioMode"><option value="original">原音乐</option><option value="swap">换音乐</option><option value="embed">所选列自带音轨</option><option value="silent">所选列静音时钟</option></select></label>
+<label><input id="loop" type="checkbox">循环</label><input id="seek" type="range" min="0" max="1000" value="0"><span id="time">0s</span></div>
+<p class="hint">逐帧按所选列实测 FPS（Global 8、Local 30）；各列按真实秒同步，不拉伸 Global 38 帧的 4.75 秒容器来匹配音乐。短列结束后停留末帧。Global 无音轨，Local 自带音轨可单听。键盘：空格播放，, / . 逐帧。</p>
+<p class="hint">工作画布使用明确 width/height；输出以实测 crop 尺寸为准，不强制 720。missing ffprobe 为 blocked，不是通过。CPU 测试不等于服务上线、真实视频验收或人工评分。</p>
+<div id="grid"></div></main><audio id="master" preload="metadata"></audio>
+</body></html>

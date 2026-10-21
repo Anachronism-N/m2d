@@ -1,0 +1,18 @@
+{
+  "official_commit": "e6c87a94ec733230dac15b924c015f6e6501e618",
+  "patch_file": "0001-local-model-paths-rank0-cfg.patch",
+  "patch_sha256": "6828320527acf4a83bf85b9291cbec430ce52874faa47d37fb7f29503f8b7f15",
+  "files": {
+    "gen_video/gen_video_global.py": {
+      "original_sha256": "9a72812853688a292a5e7611bf90871c99614b8c4b4faf5d295aa0f4f4fda023",
+      "patched_sha256": "5ced20feef684952c61bf2ce87555bb7a41ec1f9b46b5685abdecfb1c95835d5"
+    },
+    "gen_video/gen_video_local.py": {
+      "original_sha256": "a3b846ac626129ef07d1c6b68c34ddf47e463dbf7b44816a623181dc9273fceb",
+      "patched_sha256": "1586131f1f2c2ef248776df67e97d60c4e533274867a6e0056b1a0fc703b7151"
+    }
+  },
+  "unchanged_files": {
+    "diffsynth/pipelines/wan_video_new.py": "b640011b56b906f90ca750a3121041604bff3e61fe9f9c131015ba67b398043b"
+  }
+}

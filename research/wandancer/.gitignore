@@ -1,0 +1,10 @@
+!*.md
+__pycache__/
+*.py[cod]
+*.mp4
+*.wav
+*.npz
+*.safetensors
+.env*
+private/
+outputs/

@@ -1,0 +1,172 @@
+--- a/gen_video/gen_video_global.py
++++ b/gen_video/gen_video_global.py
+@@ -131,34 +131,34 @@
+         "ulysses_degree": ulysses_degree,
+     }
+ 
++    model_root = os.environ["WANDANCER_MODEL_ROOT"]
++    if not os.path.isabs(model_root):
++        raise ValueError("WANDANCER_MODEL_ROOT must be absolute")
++
+     ## load models
+     pipe = WanVideoPipeline.from_pretrained(
+         torch_dtype=torch.bfloat16,
+         device="cuda",
+         model_configs=[
+             ModelConfig(
+-                model_id="Wan-AI/Wan-Dancer-14B",
+-                origin_file_pattern="global_model.safetensors",
++                path=os.path.join(model_root, "global_model.safetensors"),
+                 offload_device="cpu",
+             ),
+             ModelConfig(
+-                model_id="Wan-AI/Wan-Dancer-14B",
+-                origin_file_pattern="models_t5_umt5-xxl-enc-bf16.pth",
++                path=os.path.join(model_root, "models_t5_umt5-xxl-enc-bf16.pth"),
+                 offload_device="cpu",
+             ),
+             ModelConfig(
+-                model_id="Wan-AI/Wan-Dancer-14B",
+-                origin_file_pattern="Wan2.1_VAE.pth",
++                path=os.path.join(model_root, "Wan2.1_VAE.pth"),
+                 offload_device="cpu",
+             ),
+             ModelConfig(
+-                model_id="Wan-AI/Wan-Dancer-14B",
+-                origin_file_pattern="models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth",
++                path=os.path.join(model_root, "models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth"),
+                 offload_device="cpu",
+             ),
+         ],
+         tokenizer_config=ModelConfig(
+-            model_id="Wan-AI/Wan-Dancer-14B", origin_file_pattern="google/umt5-xxl/"
++            path=os.path.join(model_root, "google/umt5-xxl/")
+         ),
+         skip_download=True,
+         redirect_common_files=False,
+--- a/gen_video/gen_video_local.py
++++ b/gen_video/gen_video_local.py
+@@ -364,25 +364,25 @@
+         'ulysses_degree': ulysses_degree
+     }
+ 
++    model_root = os.environ["WANDANCER_MODEL_ROOT"]
++    if not os.path.isabs(model_root):
++        raise ValueError("WANDANCER_MODEL_ROOT must be absolute")
++
+     ## load models
+     pipe = WanVideoPipeline.from_pretrained(
+         torch_dtype=torch.bfloat16,
+         device="cuda",
+         model_configs=[
+-            ModelConfig(model_id="Wan-AI/Wan-Dancer-14B", 
+-                        origin_file_pattern="local_model.safetensors", 
++            ModelConfig(path=os.path.join(model_root, "local_model.safetensors"), 
+                         offload_device="cpu"),
+-            ModelConfig(model_id="Wan-AI/Wan-Dancer-14B", 
+-                        origin_file_pattern="models_t5_umt5-xxl-enc-bf16.pth", 
++            ModelConfig(path=os.path.join(model_root, "models_t5_umt5-xxl-enc-bf16.pth"), 
+                         offload_device="cpu"),
+-            ModelConfig(model_id="Wan-AI/Wan-Dancer-14B", 
+-                        origin_file_pattern="Wan2.1_VAE.pth", 
++            ModelConfig(path=os.path.join(model_root, "Wan2.1_VAE.pth"), 
+                         offload_device="cpu"),
+-            ModelConfig(model_id="Wan-AI/Wan-Dancer-14B", 
+-                        origin_file_pattern="models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth", 
++            ModelConfig(path=os.path.join(model_root, "models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth"), 
+                         offload_device="cpu"),
+         ],
+-        tokenizer_config=ModelConfig(model_id="Wan-AI/Wan-Dancer-14B",origin_file_pattern="google/umt5-xxl/"),
++        tokenizer_config=ModelConfig(path=os.path.join(model_root, "google/umt5-xxl/")),
+         skip_download=True,
+         redirect_common_files=False,
+         use_usp=True,
+@@ -402,7 +402,7 @@
+               seed=0, max_pixels=1280*720, height=1280, width=720,
+               num_frames=81, enable_refimage=False, refimage_path=None,
+               keyframes=None, keyframes_mask=None, enable_dynamicfps=False, 
+-              enable_skip_layer=False, sigma_shift=5, num_inference_steps=48):
++              enable_skip_layer=False, sigma_shift=5, num_inference_steps=48, cfg_scale=5):
+     ## input parameters
+     input_config = {}
+     input_config['music_path'] = music_path
+@@ -426,6 +426,7 @@
+     input_config['enable_skip_layer'] = enable_skip_layer
+     input_config['sigma_shift'] = sigma_shift
+     input_config['num_inference_steps'] = num_inference_steps
++    input_config['cfg_scale'] = cfg_scale
+ 
+     # gen video
+     gen_video_single(pipe, prompt, input_config)
+@@ -456,9 +457,10 @@
+         keyframes_list[0][0] = input_image_resized
+ 
+     # save keyframe videos
+-    for i in range(len(keyframes_list)):
+-        save_keyframes_path = os.path.join(music_folder, f'keyframes_{str(i).zfill(2)}.mp4')
+-        save_video(keyframes_list[i], save_keyframes_path, fps=FPS, quality=5)
++    if int(os.environ.get("RANK", 0)) == 0:
++        for i in range(len(keyframes_list)):
++            save_keyframes_path = os.path.join(music_folder, f'keyframes_{str(i).zfill(2)}.mp4')
++            save_video(keyframes_list[i], save_keyframes_path, fps=FPS, quality=5)
+ 
+     ## 1. init model
+     prompt_path = args.prompt_path
+@@ -468,6 +470,7 @@
+         prompt += ', 帧率是30fps。'
+     logger.info(f'---- prompt: {prompt} ----')
+     pipe = init_dit_model(args)
++    dist.barrier(device_ids=[dist.get_rank()])
+ 
+     ## 2. slice music to 5s segments；
+     original_music_path = args.music_path
+@@ -498,27 +501,31 @@
+                     enable_dynamicfps=True,
+                     enable_skip_layer=True,
+                     sigma_shift=args.sigma_shift,
+-                    num_inference_steps=args.num_inference_steps)
++                    num_inference_steps=args.num_inference_steps,
++                    cfg_scale=args.cfg_scale)
+         video_paths.append(output_video_path[:-4] + "_music.mp4")
+ 
+-    ## 5. combine with music
+-    music_path = args.music_path
+-    music = mpy.AudioFileClip(music_path)
+-    total_duration = music.duration  
+-    output_video_folder = args.output_folder
+-    os.makedirs(output_video_folder, exist_ok=True)
+-    seed = args.seed
+-    if len(video_paths) > 0:
+-        output_video_path = os.path.join(output_video_folder, final_name + '_' + str(time_name) + "_seed" + str(seed) + '.mp4')
+-        clips = [mpy.VideoFileClip(vp) for vp in video_paths]
+-        final_clip = mpy.concatenate_videoclips(clips, method="compose")
+-        final_clip.audio = music
+-        final_clip = final_clip[:total_duration-0.2] 
+-        final_clip.write_videofile(output_video_path, codec='libx264', audio_codec='aac', fps=FPS)
+-        logger.info(f"Final video saved to {output_video_path}")
+-    else:
+-        logger.warning("No video files found to concatenate.")
++    if dist.get_rank() == 0:
++        ## 5. combine with music
++        music_path = args.music_path
++        music = mpy.AudioFileClip(music_path)
++        total_duration = music.duration  
++        output_video_folder = args.output_folder
++        os.makedirs(output_video_folder, exist_ok=True)
++        seed = args.seed
++        if len(video_paths) > 0:
++            output_video_path = os.path.join(output_video_folder, final_name + '_' + str(time_name) + "_seed" + str(seed) + '.mp4')
++            clips = [mpy.VideoFileClip(vp) for vp in video_paths]
++            final_clip = mpy.concatenate_videoclips(clips, method="compose")
++            final_clip.audio = music
++            final_clip = final_clip[:total_duration-0.2] 
++            final_clip.write_videofile(output_video_path, codec='libx264', audio_codec='aac', fps=FPS)
++            logger.info(f"Final video saved to {output_video_path}")
++        else:
++            logger.warning("No video files found to concatenate.")
+ 
++    dist.barrier(device_ids=[dist.get_rank()])
++
+ def main():
+     process()
+ 
