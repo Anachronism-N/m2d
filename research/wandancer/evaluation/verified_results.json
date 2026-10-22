@@ -207,7 +207,7 @@
     }
   },
   "schema_version": 1,
-  "as_of_utc": "2026-10-22T01:58:34.726Z",
+  "as_of_utc": "2026-10-22T02:09:58.907Z",
   "source_revisions": {
     "official": "e6c87a94ec733230dac15b924c015f6e6501e618",
     "upstream": "b34c83793f783b8bf0c7e82142e06dda01f98d27",
@@ -231,7 +231,8 @@
     "intervention_schedule": "db42fac3e9e014b158162a493f943c05d0366b304853e8056166086337c3866b",
     "additional_motion": "9384b77f71b6e366f5a1cb876db2b1b5c89997757a667e1520e52627b8282fe4",
     "additional_pose": "622a89f90a34fbfc1f5f8484581015e86fc8576fc767b61549edc3b79cde29e9",
-    "additional_review": "5c82bb8a4510a45311b352a5b364996a435de8a374a712a112e11064dd557223"
+    "additional_review": "5c82bb8a4510a45311b352a5b364996a435de8a374a712a112e11064dd557223",
+    "blind_review_preparation": "0770ccc9dfee2267b28842e8294321446f389416cf25860b7b7e27e80ad2e0f9"
   },
   "additional_pose_observations": {
     "outputs": 16,
@@ -250,5 +251,16 @@
     "ratings": 0,
     "review_mode": "open_not_blind",
     "human_quality_approved": false
+  },
+  "blind_review_preparation": {
+    "manifest_http_status": 200,
+    "cases": 10,
+    "variants": 16,
+    "local_contracts_passed": 16,
+    "range_reads_206": 16,
+    "GT_and_Global_hidden": true,
+    "condition_labels_hidden": true,
+    "ratings": 0,
+    "independent_human_review_completed": false
   }
 }
