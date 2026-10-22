@@ -207,17 +207,17 @@
     }
   },
   "schema_version": 1,
-  "as_of_utc": "2026-10-22T09:25:46.763Z",
+  "as_of_utc": "2026-10-22T11:07:47.189Z",
   "source_revisions": {
     "official": "e6c87a94ec733230dac15b924c015f6e6501e618",
     "upstream": "b34c83793f783b8bf0c7e82142e06dda01f98d27",
     "weights": "85ce88dd8d025459dcf0fe93982d6da8b9002957"
   },
   "cpu_verification": {
-    "unit_tests": 49,
+    "unit_tests": 55,
     "official_patch_tests": 18,
     "nft_objective_tests": 4,
-    "total": 71,
+    "total": 77,
     "javascript_syntax_passed": true
   },
   "evidence_sha256": {
@@ -232,7 +232,11 @@
     "additional_motion": "9384b77f71b6e366f5a1cb876db2b1b5c89997757a667e1520e52627b8282fe4",
     "additional_pose": "622a89f90a34fbfc1f5f8484581015e86fc8576fc767b61549edc3b79cde29e9",
     "additional_review": "5c82bb8a4510a45311b352a5b364996a435de8a374a712a112e11064dd557223",
-    "blind_review_preparation": "0770ccc9dfee2267b28842e8294321446f389416cf25860b7b7e27e80ad2e0f9"
+    "blind_review_preparation": "0770ccc9dfee2267b28842e8294321446f389416cf25860b7b7e27e80ad2e0f9",
+    "CPU_supplemental": "3797ab4bfc5fc7b131f8a31905f01fba8c442af317dde427df826df18d8470c0",
+    "SMPL_arm_observations": "ab30ab32a92e8356f01d4e210755f9b1e6c8569ab1296799defbe4c9536bb363",
+    "AI_sparse_RGB_observations": "9227e93def3568e04921149a550535b83a2b3cb4be9b31c0595cb597a208273c",
+    "AI_sparse_RGB_manifest": "c32d61f1e2f1743e695c5f75cc8633c4c1a9e7cd87e2608ef02146728dd46149"
   },
   "additional_pose_observations": {
     "outputs": 16,
@@ -280,5 +284,129 @@
     "actual_complete_variants": 0,
     "actual_expected_variants": 16,
     "independent_human_acceptance": false
+  },
+  "CPU_supplemental_evaluation": {
+    "schema_version": 1,
+    "CPU_only": true,
+    "independent_human_ratings_written": 0,
+    "AI_sparse_visual": {
+      "clips_inspected": 16,
+      "frame_interval_seconds": 0.4,
+      "sampled_frames_total": 192,
+      "matching_checkpoint_groups": {
+        "base": {
+          "clips": 3,
+          "sampled_foreground_overlay_or_ghost_clips": 3,
+          "sampled_upper_body_occlusion_or_major_blur_clips": 2
+        },
+        "sft": {
+          "clips": 3,
+          "sampled_foreground_overlay_or_ghost_clips": 0,
+          "sampled_upper_body_occlusion_or_major_blur_clips": 0
+        },
+        "nft_oracle": {
+          "clips": 3,
+          "sampled_foreground_overlay_or_ghost_clips": 3,
+          "sampled_upper_body_occlusion_or_major_blur_clips": 2
+        }
+      },
+      "not_blind_human_review": true,
+      "no_audio_or_identity_approval": true,
+      "sampled_absence_of_flag_is_not_video_quality_pass": true,
+      "time_labels": "nominal fps-filter output grid; source-frame timing approximation up to half sampling interval",
+      "approximate_source_timing_uncertainty_seconds": 0.2
+    },
+    "arm_command_diagnostic": {
+      "clips": 2,
+      "same_SMPL_side_pattern": true,
+      "joint_sides_not_RGB_calibrated": true,
+      "threshold_sensitivity": [
+        {
+          "wrist_height_torso_ratio_cutoff": 0,
+          "upper_arm_elevation_degrees": 60,
+          "min_sustained_seconds": 0.2,
+          "clips_with_left_episode": 2,
+          "clips_with_right_episode": 0,
+          "left_first_onset_range_seconds": [
+            1.4,
+            1.4
+          ]
+        },
+        {
+          "wrist_height_torso_ratio_cutoff": 0.1,
+          "upper_arm_elevation_degrees": 60,
+          "min_sustained_seconds": 0.2,
+          "clips_with_left_episode": 2,
+          "clips_with_right_episode": 0,
+          "left_first_onset_range_seconds": [
+            1.4333333333333333,
+            1.4333333333333333
+          ]
+        },
+        {
+          "wrist_height_torso_ratio_cutoff": 0.2,
+          "upper_arm_elevation_degrees": 60,
+          "min_sustained_seconds": 0.2,
+          "clips_with_left_episode": 0,
+          "clips_with_right_episode": 0,
+          "left_first_onset_range_seconds": null
+        }
+      ],
+      "instruction_success_approved": false,
+      "all_seven_fixed_Global_interventions": [
+        {
+          "wrist_height_torso_ratio_cutoff": 0,
+          "clips": 7,
+          "clips_with_left_episode": 7,
+          "clips_with_right_episode": 0,
+          "first_left_onset_range_seconds": [
+            1.4,
+            1.4
+          ]
+        },
+        {
+          "wrist_height_torso_ratio_cutoff": 0.1,
+          "clips": 7,
+          "clips_with_left_episode": 7,
+          "clips_with_right_episode": 0,
+          "first_left_onset_range_seconds": [
+            1.4333333333333333,
+            1.4666666666666666
+          ]
+        },
+        {
+          "wrist_height_torso_ratio_cutoff": 0.2,
+          "clips": 7,
+          "clips_with_left_episode": 0,
+          "clips_with_right_episode": 0,
+          "first_left_onset_range_seconds": null
+        }
+      ]
+    },
+    "checkpoint_pose_speed_diagnostic": {
+      "base": {
+        "cases": 3,
+        "mean_clip_median_root_centered_joint_speed_m_per_s": 0.2862227982389534,
+        "mean_clip_p95_root_centered_joint_speed_m_per_s": 2.465090254457944
+      },
+      "sft": {
+        "cases": 3,
+        "mean_clip_median_root_centered_joint_speed_m_per_s": 0.18849776393632411,
+        "mean_clip_p95_root_centered_joint_speed_m_per_s": 1.9062400759080103
+      },
+      "nft_oracle": {
+        "cases": 3,
+        "mean_clip_median_root_centered_joint_speed_m_per_s": 0.2889087619646478,
+        "mean_clip_p95_root_centered_joint_speed_m_per_s": 2.300878568993743
+      }
+    },
+    "speed_is_not_jitter_or_quality_score": true,
+    "limitations": [
+      "Conventional SMPL side labels uncalibrated against RGB; topology verified",
+      "Sparse frames do not prove temporal quality or synchronization",
+      "Pose velocity depends on fitting noise, true dance and camera motion",
+      "Three cases with oracle anchors, not a general method ranking",
+      "Human review and deployable reward remain incomplete"
+    ]
   }
 }
