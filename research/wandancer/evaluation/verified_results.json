@@ -207,17 +207,17 @@
     }
   },
   "schema_version": 1,
-  "as_of_utc": "2026-10-22T02:09:58.907Z",
+  "as_of_utc": "2026-10-22T09:25:46.763Z",
   "source_revisions": {
     "official": "e6c87a94ec733230dac15b924c015f6e6501e618",
     "upstream": "b34c83793f783b8bf0c7e82142e06dda01f98d27",
     "weights": "85ce88dd8d025459dcf0fe93982d6da8b9002957"
   },
   "cpu_verification": {
-    "unit_tests": 44,
+    "unit_tests": 49,
     "official_patch_tests": 18,
     "nft_objective_tests": 4,
-    "total": 66,
+    "total": 71,
     "javascript_syntax_passed": true
   },
   "evidence_sha256": {
@@ -262,5 +262,23 @@
     "condition_labels_hidden": true,
     "ratings": 0,
     "independent_human_review_completed": false
+  },
+  "rating_analysis_preparation": {
+    "status": "CPU_coverage_and_gated_snapshot_checks_passed",
+    "coverage_checks": [
+      "explicit reviewer aliases",
+      "latest rating revisions",
+      "all planned Local variants",
+      "sync_motion_quality_integer_1_to_5",
+      "observable_fact_notes",
+      "saved_media_validation_passed"
+    ],
+    "incomplete_ratings_cannot_be_frozen": true,
+    "snapshot_overwrite_refused": true,
+    "tests_added": 5,
+    "actual_ratings": 0,
+    "actual_complete_variants": 0,
+    "actual_expected_variants": 16,
+    "independent_human_acceptance": false
   }
 }

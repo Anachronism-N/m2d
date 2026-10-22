@@ -23,3 +23,17 @@ CPU fixtures test path/range/ratings guards; they are distinct from service, med
 This is **open review, not blind review**: the interface exposes case/run/model/condition labels and GT. Actual input audio is bound independently for each intervention; private prompt/provenance is not exported by the API. Both reload checks observed **zero ratings**, with the private ratings file unchanged and absent. No independent human assessment or quality approval is claimed. Browser playback, human scores and dance/music-responsiveness acceptance remain unverified; passing media contracts and decode checks do not establish them.
 
 A separate private blind-review namespace is now prepared with10 neutral cases and16 variants. Model/condition names, GT and Global containers are hidden; the randomized alias mapping stays private until ratings are frozen. Actual manifest HTTP200,16 Local contracts and16 Range206 reads passed. Ratings are still0: this establishes a blinded view, not independent reviewer identity or completed human assessment. No media or alias mapping is published.
+
+## Rating coverage and private snapshots
+
+`analyze_reviews.py` is a CPU-only coverage gate, not an automatic quality judge. Supply the private neutral case manifest, private ratings JSONL and each agreed reviewer alias explicitly:
+
+```sh
+python research/wandancer/review/analyze_reviews.py \
+  --manifest "$PRIVATE_BLIND_MANIFEST" --reviews "$PRIVATE_RATINGS_JSONL" \
+  --reviewer "$REVIEWER_ALIAS"
+```
+
+It checks the latest saved rating per reviewer/Local variant, all three integer1–5 scores, a nonempty observable-fact note and a passed saved media validation. It lists missing or incomplete variants without reading the private model/condition alias map. Review coverage does not verify independent human identity, naturalness, instruction success or reward reliability. Malformed/unknown targets are rejected rather than silently discarded.
+
+After all agreed reviewers finish every planned variant, add `--freeze "$NEW_PRIVATE_SNAPSHOT"` to write a mode0600 snapshot and source hashes. Incomplete ratings cannot be frozen; an existing snapshot cannot be overwritten. Keep the snapshot and true-condition mapping private, then perform separately recorded unblinding and event/quality judgments. A frozen complete score table is not itself a success verdict. The real current coverage remains0/16; synthetic snapshot tests are not real ratings.
