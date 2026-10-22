@@ -1,29 +1,41 @@
-# Verified experiment progress
+# Verified experiment results
 
-This is an interim engineering report, not a final quality or RL result.
+Engineering experiments completed; **independent visual quality, instruction compliance and music-control improvement are not approved**. Negative reward results are retained rather than converted into success claims. Anonymous measurements and evidence SHA256 values are in [verified_results.json](verified_results.json); raw media, per-case records, pose traces and identities remain private.
 
-## Verified
+## Generation and media acceptance
 
-- Official weights: pinned HF revision `85ce88dd8d025459dcf0fe93982d6da8b9002957`; 23 files, 85,667,867,184 bytes verified against official hashes. Global/Local safetensors each contain 1,424 tensor keys; header-only inspection did not load tensor contents.
-- Both experiment nodes: Torch 2.6.0+cu124 and locally compiled FlashAttention 2.6.3; BF16 attention forward/backward and official pipeline import passed. Model loading/inference remain separate acceptance checks.
-- Official KPop controlled Global: 48 steps, CFG5, shift5, seed0, portrait canvas720×1280. Process returned0; generated container decoded as38 frames at8fps,720×1280,4.75s,noaudio. This container represents sparse planning for the19.295782s music, not4.75s dense dance.
-- Exact native audio feature function produced579×35 features for the official music (dynamic input_fps7.5); each of six5.0625s diagnostic tracks produced152×35 (input_fps30). Features were finite. Sampling-rate logic was not silently changed.
-- Independent CPU verification:18 official-patch/launcher tests,43 diagnostic/review tests,JS syntax check. Synthetic tests are not real reward validation.
-- Private review HTTP manifest200 and media Range206 tested with actual reference/GT media. GT independently probed as81frames,16fps,5.0625s. No raw media is published.
+- Fixed official/source/weight revisions remain those in [the experiment plan](../EXPERIMENT_PLAN.md). Both authorized experiment nodes passed Torch 2.6.0+cu124, FlashAttention 2.6.3 and BF16 forward/backward checks. Verified weights comprise 23 files, 85,667,867,184 bytes.
+- All **39** media outputs passed independent full ffmpeg decoding and stage-specific ffprobe checks: 7 Global containers and 32 continuous Local videos. This includes 23 baseline/music/seed outputs, 7 additional Local interventions, and 9 matched checkpoint videos. No interpolation, enhancement or selected best frames substitute for these checks.
+- The official long-music Local output has 573 frames at 30 fps, 720×1280, with audio (19.1 seconds). Short native Local outputs have 145 decoded frames at 30 fps, 704×1280, with audio (4.86 seconds); this reflects native crop and final 0.2-second audio trim, not a 149-decoded-frame assertion.
+- Each official Global container has 38 frames at 8 fps, 720×1280, no audio and 4.75-second container duration. **It is a sparse planning container, not a continuous 4.75-second choreography or its music timeline.**
+- The 9 matched heldout checkpoint outputs have 149 frames at 30 fps, 256×448, audio and 4.967-second duration. Their small-resolution, CFG1, GT-anchor protocol differs from native portrait inference.
 
-## Running/pending
+## Music conditions and reward calibration
 
-- Native Local24-step generation from the actual Global plan is RUNNING; final output, temporal stitching, body/identity quality and music responsiveness are not approved.
-- Six paired short-case Global runs are queued/running with native48steps and matched conditions; subsequent Local24steps use each matching plan.
-- Real NLF-body observations and reward calibration are in progress. Fitted skeleton validity cannot establish RGB anatomical correctness.
-- SFT/RL comparisons have not run. No music-control improvement, reward gain, final quality ranking or AR speed claim is established.
+- Three diagnostic cases compare full-system music swap (new Global + Local), Local music swap with fixed Global, and same-condition seed change. Root-centered coordinate RMS averages are approximately 6.686 cm, 1.274 cm and 1.513 cm, respectively. These are `sqrt(mean(xyz_difference²))`, **not** mean Euclidean joint displacement, motion amplitude or synchronization scores. No population-level inference follows from three cases.
+- Fixed-Global Local music change exceeds its seed-null coordinate RMS in only **1 of 3** cases. This does not establish robust fine-grained Local music use; full-system changes also include altered planning. Fitted-pose differences are not proof of RGB anatomy or identity preservation.
+- The pose/event heuristic failed real calibration, including real GT checks; All 15 generated-video records with matched audio-event diagnostics fail provisional gates; pose observations were extracted for 16 videos. This is not 15 pose-fitting failures or automatic proof of RGB jitter. It is **not a validated RL reward**, and invalid samples remain in the denominator. No automatic beat score is used to declare music success.
+- Seven extra runs hold the original Global and seed42 fixed: local gain0.5/1/1.5 over1.5–3.5s with shared unclipped headroom, mutually exclusive left/right one-arm instructions, and pitch-preserving tempo0.8/1.2. Tempo audio is padded/truncated back to the original window, anchors are **not time-warped**, and the fast track can contain tail silence. This is a Local condition diagnostic, not an end-to-end tempo-control test. All seven passed generation and decoding. Actual native35-dimensional runtime features changed for gain/tempo; measured waveform RMS ratios were0.5000002/1.5000002 with no clipping. Root-centered coordinate RMS differences were about0.80cm for each gain variant versus reference,0.67cm between left/right prompts, and1.60cm between slow/fast fixed-anchor tracks. These are fitted-pose differences, not correct left/right execution, monotonic amplitude response or tempo synchronization. Independent event/command judgments remain unapproved.
 
-## Repairs and limitations
+## Bounded post-training and matched comparison
 
-- Minimal hash-checked official patch: explicit local models/tokenizer; rank0-only Local media writes; Local CLI CFG forwarding. Native architecture, audio feature logic, time mapping, output crop and trim preserved.
-- Flash build initially lacked CUDA library include paths; exact installed CUDA runtime headers repaired the build. A wheel-wait detector quoting issue was repaired; the built wheel subsequently passed independent hash and kernel checks. Failed attempts are retained privately.
-- Initial target repository did not grant write access. Publication moved to the user-specified `Anachronism-N/m2d`; first commit `fb88c32` was pushed and matched the remote.
-- Native Local continuation duplicate attempt was rejected by existing-run protection; the already-running correct Local was preserved rather than overwritten/restarted.
-- Only exact inspected resource-holder processes were released. Unrelated work and dirty source trees were not modified.
+These are **engineering pilots**, not the formally gated music-reward experiment: 256×448,149frames,CFG1,GT sparse anchors at frame indices0,24,48,72,96,120,148; LoRA rank32 on Local attention/FFN targets. Training uses60 rows and validation13 rows with no identical video-path overlap. Song/person isolation and near-duplicate independence are **not verified**.
 
-Complete conclusions require all scheduled runs, media checks, independent quality/music/command assessments and gated training comparisons.
+| Measurement | Base | SFT (24 updates) | NFT oracle (4 updates) |
+|---|---:|---:|---:|
+| Shared13-row raw flow-MSE, sigmas0.25/0.5/0.75 | 0.08488206 | 0.07778001 | 0.08489847 |
+| Relative to base | — | −8.36697% | +0.01933% |
+| Rows with lower mean flow-MSE | — | 13/13 | 1/13 |
+
+- SFT passed finite-gradient/optimizer/parameter-update and exact adapter saving/reload checks, plus optimizer-state restoration, not a verified complete resumed training trajectory.848 trainable tensors changed. The original weighted validation has12 strict improvements and1 zero-weight tie. Measured peak allocated/reserved CUDA memory was approximately59.0/64.0 GiB. Its original scheduler-weighted validation includes one zero-weight sample; the separate shared comparison uses three explicit **nonzero nominal** sigmas and fresh fixed noise seeds. BF16 model timesteps are250,500,752: the nominal sigma0.75 mixture is conditioned at0.752, shared by all checkpoints. The paired result remains a nominal-sigma comparison, not an exactly matched FP32 sigma/time experiment.
+- Online NFT completed two on-policy rounds with two same-condition candidates each, four updates,848 changed tensors and exact checkpoint reload. The reward is **negative clean-latent MSE to training GT**, not audio alignment, naturalness or human quality. Mean same-seed post-update reward changes were −0.00089948 and −0.00120699: both worsened. Peak allocated/reserved memory was approximately59.0/63.7 GiB. This small trial provides no evidence of RL improving dance.
+- Shared evaluation is independent in heldout video rows/noise seeds/raw nonweighted measurement, but its flow objective remains related to SFT supervision; it is **not an independent quality objective**. Different training budgets and objectives preclude a fair method ranking.
+- All three heldout conditions have matched Base/SFT/NFT generated video counterparts with the same prompt, reference, music, GT anchors, seed,24-step sampler and CFG1. Target video is not supplied to the sampler; **GT anchors still constitute an oracle condition**. Complete generation and decoding do not prove visual or music improvement. NLF observations completed for all16 new videos; detected-frame fractions ranged0.9597–1.0 with largest-box selection and no identity tracking. Timestamp-matched SFT/Base and NFT/Base coordinate RMS averaged3.84cm and1.43cm across three cases; these are not quality/reward scores.
+
+## Verification, failures and remaining gates
+
+-66 CPU tests passed:44 beat/diagnostic/review tests,18 exact-source patch/launcher tests and4 NFT objective tests; JS syntax check passed. These verify engineering/math and input safeguards, not real-video capability.
+- Initial incompatible240×416 spatial layout, CPU NLF attempts, duplicate-run protection and one SIGKILL additional-batch attempt are retained privately. The sole surviving additional batch completed; no already-running correct job was restarted or overwritten. SIGKILL is recorded, not confidently attributed to cgroup OOM without evidence.
+- Native hash-checked repairs remain limited to explicit local models/tokenizer,rank0 writes,Local CFG forwarding and orchestration/model reuse. Native audio logic, sampling,crop and trim remain unchanged. Unrelated/H3 work and dirty source trees remain untouched.
+- The private open-review adapter now exposes14 cases and32 runs with each intervention’s actual audio. All16 added video HTTP Range206 requests passed; heldout Global remains blocked rather than fabricated. Ratings are0 and this labeled/GT-visible view is not blind review; metadata acceptance is not a human rating. Independent continuous-video RGB anatomy/identity/naturalness, music timing and left/right instruction judgments remain pending. No human results, Best-of-N quality ranking, deployable reward, Global RL benefit or AR speed claim are invented.
+- Further reward optimization should wait for independently validated audio/body event and RGB quality signals and properly isolated splits. This round supports engineering feasibility and a supervised heldout flow-loss reduction, while its online NFT oracle result is negative.

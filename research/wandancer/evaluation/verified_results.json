@@ -1,0 +1,254 @@
+{
+  "media": {
+    "total": 39,
+    "passed": 39,
+    "globals": 7,
+    "locals": 32,
+    "baseline_condition_outputs": 23,
+    "additional_native_interventions": 7,
+    "matched_checkpoint_outputs": 9,
+    "human_quality_approved": false
+  },
+  "sft": {
+    "status": "bounded_sft_pilot_completed",
+    "steps": 24,
+    "train_rows": 60,
+    "validation_rows": 13,
+    "changed_tensors": 848,
+    "checkpoint_exact": true,
+    "optimizer_restored": true,
+    "peak_allocated_bytes": 63351923712,
+    "peak_reserved_bytes": 68683825152,
+    "weighted_validation": {
+      "samples": 13,
+      "mean_before": 0.06310958925706263,
+      "mean_after": 0.05488014636704555,
+      "zero_weight_samples": 1,
+      "improved_samples": 12,
+      "warning": "Contains one scheduler-zero-weight sample; shared nonzero-sigma raw flow-MSE is reported separately.",
+      "tied_samples": 1
+    },
+    "full_training_resume_trajectory_verified": false
+  },
+  "nft": {
+    "status": "online_nft_oracle_engineering_pilot_completed",
+    "optimizer_steps": 4,
+    "rounds": [
+      {
+        "round": 1,
+        "candidates": 2,
+        "mean_reward_before": -0.4058208018541336,
+        "mean_reward_after": -0.40672028064727783,
+        "mean_reward_delta": -0.0008994787931442261
+      },
+      {
+        "round": 2,
+        "candidates": 2,
+        "mean_reward_before": -0.17653891444206238,
+        "mean_reward_after": -0.17774590104818344,
+        "mean_reward_delta": -0.0012069866061210632
+      }
+    ],
+    "changed_tensors": 848,
+    "checkpoint_exact": true,
+    "peak_allocated_bytes": 63381000192,
+    "peak_reserved_bytes": 68348280832,
+    "deployable_music_reward": false,
+    "initialization": "independent base adapter, not SFT continuation"
+  },
+  "common_heldout": {
+    "status": "common_heldout_raw_flow_mse_completed",
+    "samples": 13,
+    "sigmas": [
+      0.25,
+      0.5,
+      0.75
+    ],
+    "means": {
+      "base": 0.08488206240611199,
+      "sft": 0.07778000860260083,
+      "nft_oracle": 0.08489846743834324
+    },
+    "sft_improved_rows": 13,
+    "nft_improved_rows": 1,
+    "sft_delta_percent": -8.366966591282743,
+    "nft_delta_percent": 0.019326853950318856,
+    "independence": "heldout video rows, fixed fresh noise seeds, raw nonzero-sigma metric; objective remains in the SFT flow-supervision family, not independent visual quality",
+    "sigmas_are_nominal": true,
+    "timestep_dtype": "bfloat16",
+    "actual_model_timesteps": [
+      250,
+      500,
+      752
+    ],
+    "precision_limitation": "Nominal noise sigma 0.75 uses BF16 model timestep 752 (effective conditioning 0.752); all checkpoints share this mismatch. Existing paired results were not rerun with FP32 timesteps."
+  },
+  "music_interventions": {
+    "case_count": 3,
+    "root_centered_rmse_cm": {
+      "full_system": {
+        "mean": 6.686389598804575,
+        "median": 7.936572033856837,
+        "min": 4.147607351522906,
+        "max": 7.974989411033982
+      },
+      "local_music_only": {
+        "mean": 1.2737913754088261,
+        "median": 1.5442210915400085,
+        "min": 0.5955261379269449,
+        "max": 1.681626896759525
+      },
+      "local_seed_null": {
+        "mean": 1.5125982940466465,
+        "median": 1.365927415024297,
+        "min": 1.3472499488163128,
+        "max": 1.8246175182993292
+      }
+    },
+    "invalid_generated_diagnostics": 15,
+    "local_music_exceeds_seed_null_cases": 1,
+    "coordinate_rms_definition": "sqrt(mean(root-centered xyz coordinate differences squared)); not per-joint Euclidean displacement or synchronization",
+    "generated_diagnostic_records": 15
+  },
+  "limitations": [
+    "low-resolution256x448149frame training pilots",
+    "GToracleanchors in pilots",
+    "no verified song/person isolation",
+    "different SFT24step NFT4step budgets",
+    "no human quality acceptance",
+    "pose-beat heuristic failed calibration"
+  ],
+  "matched_checkpoint_videos": {
+    "status": "matched_heldout_videos_completed_not_quality_approved",
+    "cases": 3,
+    "models": [
+      "base",
+      "sft",
+      "nft_oracle"
+    ],
+    "outputs": 9,
+    "geometry": [
+      256,
+      448,
+      149
+    ],
+    "sampling_steps": 24,
+    "cfg_scale": 1,
+    "oracle_GT_anchors": true,
+    "target_video_passed_to_sampler": false,
+    "independent_human_quality_approved": false,
+    "mean_root_centered_coordinate_rms_vs_base_cm": {
+      "sft_vs_base": 3.8353860177887324,
+      "nft_vs_base": 1.4335662402083313
+    },
+    "pose_difference_is_not_quality_or_reward_improvement": true
+  },
+  "additional_interventions": {
+    "status": "generated_and_full_decode_passed_not_capability_approved",
+    "cases": 1,
+    "outputs": 7,
+    "seed": 42,
+    "Global_fixed": true,
+    "gain": {
+      "factors": [
+        0.5,
+        1,
+        1.5
+      ],
+      "window_seconds": [
+        1.5,
+        3.5
+      ],
+      "shared_headroom_scale": 0.7054307307069128,
+      "per_clip_normalization": false,
+      "measured_window_RMS_ratios": {
+        "low": 0.5000002059334803,
+        "high": 1.5000002445069038
+      },
+      "all_waveforms_unclipped": true
+    },
+    "fine_text": {
+      "sides": [
+        "left",
+        "right"
+      ],
+      "requested_fact": "raise one specified arm once"
+    },
+    "tempo": {
+      "rates": [
+        0.8,
+        1.2
+      ],
+      "pitch_preserved": true,
+      "original_audio_length_preserved": true,
+      "anchors_time_warped": false,
+      "end_to_end_tempo_test": false
+    },
+    "pose_diagnostics_status": "real_NLF_observations_and_timestamp_matched_comparisons_completed_not_quality_approved",
+    "independent_instruction_success_approved": false,
+    "runtime_audio_feature_changes_verified": true,
+    "root_centered_coordinate_rms_cm": {
+      "gain_low": {
+        "full_window": 0.7953542414903922,
+        "gain_window_1p5_to_3p5": 0.5901655311537874
+      },
+      "gain_high": {
+        "full_window": 0.7985303447974074,
+        "gain_window_1p5_to_3p5": 0.6347949365566979
+      },
+      "text_left_vs_right": {
+        "full_window": 0.6726201336902125,
+        "gain_window_1p5_to_3p5": 0.7103602841674341
+      },
+      "tempo_slow_vs_fast_fixed_original_Global_not_warped": {
+        "full_window": 1.6022750348623789,
+        "gain_window_1p5_to_3p5": 0.6265190651944409
+      }
+    }
+  },
+  "schema_version": 1,
+  "as_of_utc": "2026-10-22T01:58:34.726Z",
+  "source_revisions": {
+    "official": "e6c87a94ec733230dac15b924c015f6e6501e618",
+    "upstream": "b34c83793f783b8bf0c7e82142e06dda01f98d27",
+    "weights": "85ce88dd8d025459dcf0fe93982d6da8b9002957"
+  },
+  "cpu_verification": {
+    "unit_tests": 44,
+    "official_patch_tests": 18,
+    "nft_objective_tests": 4,
+    "total": 66,
+    "javascript_syntax_passed": true
+  },
+  "evidence_sha256": {
+    "baseline_media": "2a2930893e978748a338ef5933d4d90638dab5ec7561a00bd9f3453772474c64",
+    "additional_media": "00453e5fc2b5bbc03bb76fa8f1745267dc93545d40b575d70f2b4c2b7e10c2da",
+    "sft": "1f1cf987fd8f309e269313ed5c765382b78e30241fd7f1bf0bf1bd3e0954e1ae",
+    "nft": "427e6f44003555c130b65fd9c5f84b02f7e3d61639a83d900b638f3bd0436a20",
+    "shared_flow": "63d3d53e2054d265e6bd2b489409fd60fd53146ead1952453b18cb402f24fedd",
+    "matched_videos": "6966b98666366a8fd47f7429aefdf96e8b57533f8dfeeb89f9eb325e1a246b55",
+    "music_motion": "496078bb7ee7d47d70d15504e327ac440485a9d1f35f7c473765c2610175a58e",
+    "intervention_schedule": "db42fac3e9e014b158162a493f943c05d0366b304853e8056166086337c3866b",
+    "additional_motion": "9384b77f71b6e366f5a1cb876db2b1b5c89997757a667e1520e52627b8282fe4",
+    "additional_pose": "622a89f90a34fbfc1f5f8484581015e86fc8576fc767b61549edc3b79cde29e9",
+    "additional_review": "5c82bb8a4510a45311b352a5b364996a435de8a374a712a112e11064dd557223"
+  },
+  "additional_pose_observations": {
+    "outputs": 16,
+    "extraction_failures": 0,
+    "minimum_detected_frame_fraction": 0.959731543624161,
+    "identity_tracking": false,
+    "RGB_quality_verified": false,
+    "paired_decoded_timestamps_matched": true
+  },
+  "review": {
+    "manifest_http_status": 200,
+    "cases": 14,
+    "runs": 32,
+    "new_video_ranges_passed": 16,
+    "range_http_status": 206,
+    "ratings": 0,
+    "review_mode": "open_not_blind",
+    "human_quality_approved": false
+  }
+}

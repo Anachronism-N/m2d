@@ -21,6 +21,7 @@ def main():
     parser.add_argument('--device', choices=('cpu', 'cuda'), default='cuda')
     parser.add_argument('--batch-size', type=int, default=8)
     parser.add_argument('--threads', type=int, default=8)
+    parser.add_argument('--gpu-memory-fraction', type=float, default=None)
     args = parser.parse_args()
     if args.batch_size < 1 or args.threads < 1:
         parser.error('batch-size and threads must be positive')
@@ -30,6 +31,10 @@ def main():
         parser.error('outputs must be private and outside the publication checkout')
     root.mkdir(parents=True, exist_ok=False)
     torch.set_num_threads(args.threads)
+    if args.gpu_memory_fraction is not None:
+        if args.device != 'cuda' or not 0 < args.gpu_memory_fraction <= 1:
+            parser.error('gpu-memory-fraction requires CUDA and a fraction in (0,1]')
+        torch.cuda.set_per_process_memory_fraction(args.gpu_memory_fraction)
     model = torch.jit.load(str(args.model), map_location=args.device).eval()
     manifest = json.loads(args.manifest.read_text())
     if manifest.get('schema_version') != 1 or not isinstance(manifest.get('videos'), list):

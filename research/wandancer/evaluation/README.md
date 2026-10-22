@@ -4,7 +4,7 @@ This is an **interpretable diagnostic tool, not an RL trainer, validated reward,
 FACT reproduction, or automatic success judge**. Only Python stdlib and NumPy are
 required. It does not load Torch, run NLF, use a GPU, modify media, or infer beat
 labels. Synthetic tests establish equations and guards, **not real-video reward
-reliability**. Real generated RGB/pose/beat calibration remains pending.
+reliability**. Real pose/beat calibration has been attempted and failed provisional gates; the current heuristic must not be optimized as an RL reward. Independent generated RGB quality review remains pending. See [EXPERIMENT_PROGRESS.md](EXPERIMENT_PROGRESS.md).
 
 ## Definitions and raw components
 
@@ -178,4 +178,4 @@ Wan-Dancer quality or a real NLF/video/reward pipeline.
 
 ## NLF observation adapter
 
-`extract_pose.py` uses explicit private video manifests and a new private output namespace. The current NLF TorchScript detector contains hard-coded `cuda:0` operations: all three CPU attempts failed and were retained. Use `--device cuda` on an authorized available GPU; `map_location=cpu` does not establish CPU portability. No weights or H3 scripts are changed. Actual decoder timestamps, detection validity and largest-box selection are recorded; this is not identity tracking. GPU extraction and real reward calibration remain pending.
+`extract_pose.py` uses explicit private video manifests and a new private output namespace. The current NLF TorchScript detector contains hard-coded `cuda:0` operations: all three CPU attempts failed and were retained. Use `--device cuda` on an authorized available GPU; `map_location=cpu` does not establish CPU portability. No weights or H3 scripts are changed. Actual decoder timestamps, detection validity and largest-box selection are recorded; this is not identity tracking. GPU extraction completed for the original 16 generated videos with failures and largest-box selection reported separately; fitted-body observations do not establish RGB quality. Real reward calibration failed provisional gates. Additional intervention/checkpoint observations are evaluated separately; see the verified progress report.

@@ -1,6 +1,6 @@
 # Wan-Dancer controlled experiments
 
-Research status: **fixed weights and both-node runtime/kernel checks passed; the native Global container passed media validation. Native Local and paired-condition experiments are running; raw video quality, reward calibration and training acceptance remain pending.** See [EXPERIMENT_PLAN.md](EXPERIMENT_PLAN.md) for the gated protocol. No GPU-quality claim follows from the unit tests.
+Research status: **23 baseline/condition media outputs passed full decode and stage-specific checks. A 24-step Local LoRA SFT pilot and a 4-update online NFT oracle pilot completed, including checkpoint checks. Shared heldout raw flow-MSE favors SFT, not NFT; this is not evidence of visual quality or music synchronization improvement. Seven extra interventions and nine matched checkpoint videos also passed full decode (39 media outputs total); independent human quality review remains pending.** See [EXPERIMENT_PLAN.md](EXPERIMENT_PLAN.md) for the gated protocol. No GPU-quality claim follows from the unit tests.
 
 ## Components
 
@@ -8,14 +8,17 @@ Research status: **fixed weights and both-node runtime/kernel checks passed; the
 - `tools/apply_official_patch.py`: verify original SHA256 and unchanged pipeline before applying; refuses unknown contents and a second application.
 - `tools/run_native.py`: one-node/eight-rank stage launcher, default dry-run; external manifest and private output directory. Generated media remain unassessed until separate validation.
 - `evaluation/diagnostics.py` and `evaluation/run_diagnostics.py`: uncalibrated seconds-based event/pose diagnostics, invalid-sample accounting and paired seed-null aggregation. See [evaluation/README.md](evaluation/README.md). `beat_diagnostics.py` is a small equation-level fixture diagnostic, not the full protocol.
+- `training/`: bounded Local LoRA training, online NFT **GT-latent oracle engineering** pilot, shared nonzero-sigma flow-MSE comparison and matched heldout video generation. The pilots use GT anchors and unequal update budgets; they are not a deployable music-reward experiment.
+- `evaluation/verified_results.json`: inspected anonymous aggregate measurements; detailed receipts, videos and pose traces remain private.
 - `review/`: loopback review service with explicit media allowlist, Range streaming, private append-only ratings and stage-aware ffprobe checks. Metadata validation is not human quality approval.
 
-Run CPU tests with NumPy available:
+Run CPU tests with Python 3.10+, NumPy and Torch available; the frontend check also needs Node:
 
 ```sh
 python -m unittest discover -s research/wandancer/tests -v
 WANDANCER_OFFICIAL_SOURCE="$PINNED_OFFICIAL_CHECKOUT" \
     python research/wandancer/tools/test_official_patch.py -v
+python -m unittest discover -s research/wandancer/training -p 'test_*.py' -v
 node --check research/wandancer/review/app.js
 ```
 

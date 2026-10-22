@@ -40,7 +40,12 @@ def main():
         run_id = row['run_id']
         if not isinstance(run_id, str) or not run_id or any(x in run_id for x in ('/', '\\', '\n', '\r')) or run_id in ('.', '..'):
             raise ValueError('Safe run path component required')
-        manifest = json.loads(Path(row['manifest']).read_text())
+        if 'manifest' in row:
+            manifest = json.loads(Path(row['manifest']).read_text())
+        else:
+            manifest = {key: row[key] for key in ('image_path', 'music_path', 'prompt_path', 'seed')}
+            manifest.update(height=1280, width=720, num_frames=149,
+                            num_inference_steps=24, cfg_scale=5, sigma_shift=5)
         for key in ('image_path', 'music_path', 'prompt_path'):
             path = Path(manifest[key])
             if not path.is_absolute() or not path.is_file():
@@ -72,13 +77,18 @@ def main():
                 receipt_path = Path(row['global_receipt'])
                 if receipt_path.exists():
                     receipt = json.loads(receipt_path.read_text())
-                    state[0] = receipt.get('execution_status')
+                    state[0] = {'status': receipt.get('execution_status'),
+                                'output': receipt.get('expected_output')}
                 else:
-                    state[0] = 'PENDING'
+                    state[0] = {'status': 'PENDING', 'output': None}
             dist.broadcast_object_list(state, src=0)
-            if state[0] == 'FAILED':
+            if state[0]['status'] == 'FAILED':
                 raise RuntimeError('Global failed; refuse invalid plan')
-            if state[0] == 'GENERATED_NOT_QUALITY_VALIDATED':
+            if state[0]['status'] == 'GENERATED_NOT_QUALITY_VALIDATED':
+                actual_plan = state[0]['output']
+                if 'global_video_path' in manifest and manifest['global_video_path'] != actual_plan:
+                    raise ValueError('Manifest plan differs from generated Global receipt')
+                manifest['global_video_path'] = actual_plan
                 break
             if time.monotonic() >= deadline:
                 raise TimeoutError('Global plan not ready within bounded wait')
